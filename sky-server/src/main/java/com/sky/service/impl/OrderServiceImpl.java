@@ -20,17 +20,20 @@ import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import com.sky.websocket.WebSocketServer;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -264,6 +267,48 @@ public class OrderServiceImpl implements OrderService {
         }
         orderDetailMapper.insertBatch(detail);
 
+    }
+
+    //订单分页 及其 搜索
+    public PageResult orderSearch(OrdersPageQueryDTO ordersPageQueryDTO) {
+        //分页 PageHelper 设置
+        PageHelper.startPage(ordersPageQueryDTO.getPage(),ordersPageQueryDTO.getPageSize());
+        //搜索数据 并 返回 查询数量
+        Page<Orders> list = orderMapper.pageQuery(ordersPageQueryDTO);
+
+        //封装结果返回 total result 补充信息
+        List<OrderVO> listVO = getOrderVOList(list);
+
+        return new  PageResult(list.getTotal(),listVO);
+    }
+
+    private List<OrderVO> getOrderVOList(Page<Orders> list) {
+        List<OrderVO> orderVOList = new ArrayList<>();
+
+        List<Orders> orders = list.getResult();
+        if(!CollectionUtils.isEmpty(orders)){
+            for (Orders order : orders) {
+                //相同字段赋值
+                OrderVO orderVO = new OrderVO();
+                BeanUtils.copyProperties(order,orderVO);
+                String orderDishes =  getOrderDishesStr(order);
+                orderVO.setOrderDishes(orderDishes);
+                orderVOList.add(orderVO);
+            }
+        }
+        return orderVOList;
+    }
+
+    private String getOrderDishesStr(Orders order) {
+        //查询订单具体菜品名称
+        List<OrderDetail> detail = orderDetailMapper.getDetailByOrderId(order.getId());
+        //将菜品名称拼接
+        List<String> orderDishList = detail.stream().map(x -> {
+            String orderDish = x.getName() + "*" + x.getNumber() + ";";
+            return orderDish;
+        }).collect(Collectors.toList());
+
+        return String.join(";",orderDishList);
     }
 
 
