@@ -52,12 +52,6 @@
             <if test="status != null">
                 and status = #{status}
             </if>
-<!--            <if test="number != null and number != ''">-->
-<!--                and number like concat('%',#{number},'%')-->
-<!--            </if>>-->
-<!--            <if test="phone !=null and phone != ''">-->
-<!--                and phone like concat('%',#{phone},'%')-->
-<!--            </if>>-->
             <if test="number != null and number!=''">
                 and number like concat('%',#{number},'%')
             </if>

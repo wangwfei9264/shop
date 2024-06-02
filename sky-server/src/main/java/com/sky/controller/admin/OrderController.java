@@ -1,9 +1,7 @@
 package com.sky.controller.admin;
 
-import com.sky.dto.OrdersCancelDTO;
-import com.sky.dto.OrdersConfirmDTO;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersRejectionDTO;
+import com.sky.dto.*;
+import com.sky.entity.Orders;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.OrderService;
@@ -40,4 +38,53 @@ public class OrderController {
         return Result.success(pageResult);
     }
 
+    //统计订单情况
+    @GetMapping("/statistics")
+    public Result getTotal(){
+         OrderStatisticsVO orderStatisticsVO = orderService.getStatusTotal();
+        return Result.success(orderStatisticsVO);
+    }
+
+    //查询订单详情
+    @GetMapping("/details/{id}")
+    public Result details(@PathVariable Long id) {
+        OrderVO detail = orderService.getDetailById(id);
+        return Result.success(detail);
+    }
+
+    //接单
+    @PutMapping("/confirm")
+    public Result confirm(@RequestBody OrdersConfirmDTO ordersConfirmDTO) {
+        ordersConfirmDTO.setStatus(Orders.CONFIRMED);
+        orderService.confirm(ordersConfirmDTO);
+        return Result.success();
+    }
+
+    //拒单
+    @PutMapping("/rejection")
+    public Result reject(@RequestBody OrdersRejectionDTO ordersRejectionDTO) {
+        orderService.reject(ordersRejectionDTO);
+        return Result.success();
+    }
+
+    //取消订单
+    @PutMapping("/cancel")
+    public Result cancel(@RequestBody OrdersRejectionDTO ordersRejectionDTO) {
+        orderService.cancel(ordersRejectionDTO);
+        return Result.success();
+    }
+
+    //派送订单
+    @PutMapping("/delivery/{id}")
+    public Result delivery(@PathVariable Long id) {
+        orderService.delivery(id);
+        return Result.success();
+    }
+
+    //完成订单
+    @PutMapping("/complete/{id}")
+    public Result complete(@PathVariable Long id) {
+        orderService.complete(id);
+        return Result.success();
+    }
 }
