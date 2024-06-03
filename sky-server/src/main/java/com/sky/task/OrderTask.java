@@ -1,15 +1,15 @@
 package com.sky.task;
 
 
-import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
+import com.sky.utils.SnCalUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 
 @Component
 @Slf4j
@@ -18,8 +18,11 @@ public class OrderTask {
     @Autowired
     private OrderMapper orderMapper;
 
+    @Autowired
+    private SnCalUtil snCalUtil;
 
-    //处理超时订单
+
+/*    //处理超时订单
     @Scheduled(cron = "0 * * * * ?")    //每分钟触发一次
     //@Scheduled(cron = "0/5 * * * * ?")    //每5秒触发一次
     public void processTimeOut(){
@@ -56,6 +59,14 @@ public class OrderTask {
             }
         }
 
+    }*/
+
+
+    //测试百度地图生成秘钥
+    @Scheduled(cron = "0/5 * * * * ?")    //每5秒触发一次
+    public void procesSn() throws UnsupportedEncodingException, NoSuchAlgorithmException {
+
+        snCalUtil.creatSn();
     }
 
 
