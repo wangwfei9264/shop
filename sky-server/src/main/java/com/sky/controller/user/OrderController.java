@@ -29,7 +29,7 @@ public class OrderController {
 
     @ApiOperation("用户下单")
     @PostMapping("/submit")
-    public Result<OrderSubmitVO> submit(@RequestBody OrdersSubmitDTO orderSubmitDTO) throws IOException {
+    public Result<OrderSubmitVO> submit(@RequestBody OrdersSubmitDTO orderSubmitDTO) throws Exception {
         log.info("orderSubmitDTO:{}", orderSubmitDTO);
         OrderSubmitVO orderSubmitVO = orderService.submitOrder(orderSubmitDTO);
 
