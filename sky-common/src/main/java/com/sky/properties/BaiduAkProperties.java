@@ -10,4 +10,5 @@ import org.springframework.stereotype.Component;
 public class BaiduAkProperties {
     private String ak;
     private String sk;
+    private String address;
 }

@@ -3,11 +3,13 @@ package com.sky.task;
 
 import com.sky.mapper.OrderMapper;
 import com.sky.utils.SnCalUtil;
+import com.sky.utils.Test111;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
@@ -60,14 +62,4 @@ public class OrderTask {
         }
 
     }*/
-
-
-    //测试百度地图生成秘钥
-    @Scheduled(cron = "0/5 * * * * ?")    //每5秒触发一次
-    public void procesSn() throws UnsupportedEncodingException, NoSuchAlgorithmException {
-
-        snCalUtil.creatSn();
-    }
-
-
 }

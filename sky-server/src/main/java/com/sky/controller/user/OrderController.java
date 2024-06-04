@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @Api("用户端订单相关接口")
 @RestController("userOrderController")
 @RequestMapping("/user/order")
@@ -27,7 +29,7 @@ public class OrderController {
 
     @ApiOperation("用户下单")
     @PostMapping("/submit")
-    public Result<OrderSubmitVO> submit(@RequestBody OrdersSubmitDTO orderSubmitDTO) {
+    public Result<OrderSubmitVO> submit(@RequestBody OrdersSubmitDTO orderSubmitDTO) throws IOException {
         log.info("orderSubmitDTO:{}", orderSubmitDTO);
         OrderSubmitVO orderSubmitVO = orderService.submitOrder(orderSubmitDTO);
 

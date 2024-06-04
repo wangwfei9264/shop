@@ -8,8 +8,11 @@ import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
 public interface OrderService {
-    OrderSubmitVO submitOrder(OrdersSubmitDTO orderSubmitDTO);
+    OrderSubmitVO submitOrder(OrdersSubmitDTO orderSubmitDTO) throws Exception;
 
     /**
      * 订单支付

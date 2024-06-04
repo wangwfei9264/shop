@@ -61,3 +61,4 @@ sky:
     baidu:
       ak: ${sky.baidu.ak}
       sk: ${sky.baidu.sk}
+      address: ${sky.baidu.address}

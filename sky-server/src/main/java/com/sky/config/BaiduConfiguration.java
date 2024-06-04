@@ -17,6 +17,6 @@ public class BaiduConfiguration {
     @ConditionalOnMissingBean
     public SnCalUtil baaiduAkUtil(BaiduAkProperties baiduAkProperties){
         log.info("开始创建百度地图ak工具类对象：{}",baiduAkProperties);
-        return new SnCalUtil(baiduAkProperties.getAk(), baiduAkProperties.getSk());
+        return new SnCalUtil(baiduAkProperties.getAk(), baiduAkProperties.getSk(),baiduAkProperties.getAddress());
     }
 }
