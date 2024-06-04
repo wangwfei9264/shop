@@ -13,6 +13,7 @@ import com.sky.entity.AddressBook;
 import com.sky.entity.GecodingUseing.Location;
 import com.sky.entity.GecodingUseing.ShowLocation;
 import com.sky.exception.AddressBookBusinessException;
+import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
 import com.sky.result.PageResult;
@@ -53,6 +54,9 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
+    private WebSocketServer webSocketServer;
+
+    @Autowired
     private OrderMapper orderMapper;
 
     @Autowired
@@ -69,9 +73,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private WeChatPayUtil weChatPayUtil;
-
-    @Autowired
-    private WebSocketServer webSocketServer;
 
     @Autowired
     private SnCalUtil snCalUtil;
@@ -100,9 +101,9 @@ public class OrderServiceImpl implements OrderService {
         double haversine = haversine(showLocation.getResult().getLocation(), showUserLocation.getResult().getLocation());
         System.out.println(haversine);
 
-        if(haversine > 5l){
-            throw new Exception(MessageConstant.USER_LENGTH_BIGGER) ;
-        }
+//        if(haversine > 5l){
+//            throw new Exception(MessageConstant.USER_LENGTH_BIGGER) ;
+//        }
 
         //查询购物车是否为空
         Long userId = BaseContext.getCurrentId();
@@ -169,6 +170,15 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+
+        //通知商家
+        HashMap map = new HashMap();
+        map.put("type", 1);
+        map.put("orderId",id);
+        map.put("content","订单号  " + id);
+
+        String string = JSON.toJSONString(map);
+        webSocketServer.sendToAllClient(string);
 
         /*//调用微信支付接口，生成预支付交易单
         JSONObject jsonObject = weChatPayUtil.pay(
@@ -339,7 +349,7 @@ public class OrderServiceImpl implements OrderService {
         return orderStatisticsVO;
     }
 
-    @Override
+    //接单
     public void confirm(OrdersConfirmDTO ordersConfirmDTO) {
         //改变订单状态
         Orders orders = new Orders();
@@ -378,6 +388,19 @@ public class OrderServiceImpl implements OrderService {
         orders.setId(id);
         orders.setStatus(Orders.COMPLETED);
         orderMapper.update(orders);
+    }
+
+    //客户催单
+    public void reminder(Long id) {
+        Orders order = orderMapper.getById(id);
+        if(order == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        HashMap map = new HashMap();;
+        map.put("type",2);
+        map.put("orderId",id);
+        map.put("content","订单号" + order.getNumber());
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
     }
 
     private List<OrderVO> getOrderVOList(Page<Orders> list) {
