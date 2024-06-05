@@ -87,5 +87,8 @@ public interface DishMapper {
      * @param map
      * @return
      */
+    Integer countByMap1(Map map);
+
     Integer countByMap(Map map);
+
 }

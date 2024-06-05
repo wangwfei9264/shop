@@ -10,4 +10,22 @@
                 (#{od.name},#{od.image},#{od.orderId},#{od.dishId},#{od.setmealId},#{od.dishFlavor},#{od.number},#{od.amount})
             </foreach>
     </insert>
+    <select id="getDishTop10" resultType="com.sky.dto.GoodsSalesDTO">
+        select od.name, count(od.number) number
+        from orders o,
+        order_detail od
+        <where>od.id = o.id
+            and o.status = 5
+            <if test="beginTime != null">
+                and o.order_time &gt; #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and o.order_time &lt; #{endTime}
+            </if>
+        </where>
+        group by od.name
+        order by number desc
+        limit 0,10
+
+    </select>
 </mapper>
